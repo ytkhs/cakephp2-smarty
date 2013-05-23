@@ -34,7 +34,7 @@ class SmartyView extends View {
 	
 		parent::__construct($controller);
 				
-		if(!App::import('Vendor', 'Smarty', array('file' => 'smarty'.DS.'Smarty.class.php'))) {
+		if(!App::import('Vendor', 'Smarty', array('file' => 'autoload.php'))) {
 			die('error Loading Smarty Class');
 		}
 		
@@ -45,15 +45,13 @@ class SmartyView extends View {
 		//$this->Smarty->left_delimiter = '{';
 		//$this->Smarty->right_delimiter = '}';
 		
-		
 		// The extension for template file
 		$this->ext= '.tpl';
 		$this->Smarty->template_dir = APP.'View'.DS;
-		
 		//plugins dir(s) must be set by array
 		$this->Smarty->plugins_dir = array(
 			APP.'View'.DS.'SmartyPlugins',
-			VENDORS.DS.'smarty'.DS.'plugins'
+			VENDORS.'smarty'.DS.'smarty'. DS. 'distribution'.DS.'libs'.DS.'plugins'
 		);
 		$this->Smarty->config_dir = APP.'View'.DS.'SmartyConfigs'.DS;
 		$this->Smarty->compile_dir = TMP.'smarty'.DS.'compile'.DS;
@@ -61,13 +59,15 @@ class SmartyView extends View {
 		
 		
 		$this->Smarty->error_reporting = 'E_ALL & ~E_NOTICE';
-		
+		$this->Smarty->default_modifiers = array('escape:"html"');
 		
 		//UNDONE: if you need , modify this array to call filter(s).
-		//$this->Smarty->autoload_filters = array(
-		//	'pre' => array('hoge'),
-		//	'output' => array('fuga')
-		//);
+		/*
+		$this->Smarty->autoload_filters = array(
+			'pre' => array('hoge'),
+			'output' => array('escape')
+		);
+		*/
 		
 		//for development
 		$this->Smarty->debugging = (Configure::read('debug') == 0) ? false : true;
@@ -90,14 +90,9 @@ class SmartyView extends View {
 			}
 		}
 		
-		$tmp_debug = Configure::read('debug');
-		Configure::write('debug', 0);
-		
 		ob_start();
 		$this->Smarty->display($___viewFn);
-		$html = ob_get_clean();
-		Configure::write('debug', $tmp_debug);
-		
+		$html = ob_get_clean();		
 		return $html;
 	}
 	
