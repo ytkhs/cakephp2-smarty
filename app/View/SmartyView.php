@@ -78,31 +78,40 @@ class SmartyView extends View {
 
 	
 	protected function _render($___viewFn, $___dataForView = array()) {	
+		$isCtpFile = (substr($___viewFn, -3) === 'ctp');
+		
 		if (empty($___dataForView)) {
 			$___dataForView = $this->viewVars;
 		}
 		
-		extract($___dataForView, EXTR_SKIP);
-		
-		foreach($___dataForView as $data => $value) {
-			if(!is_object($data)) {
-				$this->Smarty->assign($data, $value);
-			}
+		if ($isCtpFile) {
+			$out = parent::_render($___viewFn, $___dataForView);
 		}
+		else {
 		
-		ob_start();
-		$this->Smarty->display($___viewFn);
-		$html = ob_get_clean();		
-		return $html;
+			extract($___dataForView, EXTR_SKIP);
+			
+			foreach($___dataForView as $data => $value) {
+				if(!is_object($data)) {
+					$this->Smarty->assign($data, $value);
+				}
+			}
+			$this->Smarty->assign('_view', $this);
+			
+			ob_start();
+			$this->Smarty->display($___viewFn);
+			$out = ob_get_clean();
+		}
+		return $out;
 	}
 	
-	//Load helpers to use in tpl, like {$Html->link("Go Google", 'http://google.co.jp')}
+	//Load helpers to use in tpl, like {$html->link("Go Google", 'http://google.co.jp')}
 	public function loadHelpers() { 
 		$helpers = HelperCollection::normalizeObjectArray($this->helpers); 
 		foreach ($helpers as $name => $properties) { 
 			list($plugin, $class) = pluginSplit($properties['class']);
 			$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);
-			$this->Smarty->assign($name, $this->{$class});
+			$this->Smarty->assign(strtolower($name), $this->{$class});
 		}
 		$this->_helpersLoaded = true;
 	}
