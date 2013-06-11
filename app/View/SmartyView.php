@@ -28,56 +28,66 @@
  * @package Smarty
  */
 
-class SmartyView extends View {
-
-	function __construct (&$controller) {
+class SmartySingleton {
+	static private $instance = null;
 	
-		parent::__construct($controller);
-				
-		if(!App::import('Vendor', 'Smarty', array('file' => 'autoload.php'))) {
-			die('error Loading Smarty Class');
-		}
+	private function __construct() {}
+	private function __clone() {}
+	private function __wakeup() {}
+	
+	static public function instance() {
+		if (is_null(self::$instance)) {
 		
-		$this->Smarty = new Smarty();
-		
-		//UNDONE: set if you need
-		//$this->subDir = 'smarty'.DS;
-		//$this->Smarty->left_delimiter = '{';
-		//$this->Smarty->right_delimiter = '}';
-		
-		// The extension for template file
-		$this->ext= '.tpl';
-		$this->Smarty->template_dir = APP.'View'.DS;
-		//plugins dir(s) must be set by array
-		$this->Smarty->plugins_dir = array(
-			APP.'View'.DS.'SmartyPlugins',
-			VENDORS.'smarty'.DS.'smarty'. DS. 'distribution'.DS.'libs'.DS.'plugins'
-		);
-		$this->Smarty->config_dir = APP.'View'.DS.'SmartyConfigs'.DS;
-		$this->Smarty->compile_dir = TMP.'smarty'.DS.'compile'.DS;
-		$this->Smarty->cache_dir = TMP.'smarty'.DS.'cache'.DS;
-		
-		
-		$this->Smarty->error_reporting = 'E_ALL & ~E_NOTICE';
-		$this->Smarty->default_modifiers = array('escape:"html"');
-		
-		//UNDONE: if you need , modify this array to call filter(s).
-		/*
-		$this->Smarty->autoload_filters = array(
-			'pre' => array('hoge'),
-			'output' => array('escape')
-		);
-		*/
-		
-		//for development
-		$this->Smarty->debugging = (Configure::read('debug') == 0) ? false : true;
-		$this->Smarty->compile_check = true;
+			App::import('Vendor', 'Smarty', array('file' => 'autoload.php'));
+			$smarty = new Smarty();
+			$smarty->template_dir = APP.'View'.DS;
+			
+			//plugins dir(s) must be set by array
+			$smarty->plugins_dir = array(
+				APP.'View'.DS.'SmartyPlugins',
+				VENDORS.'smarty'.DS.'smarty'. DS. 'distribution'.DS.'libs'.DS.'plugins'
+			);
+			$smarty->config_dir = APP.'View'.DS.'SmartyConfigs'.DS;
+			$smarty->compile_dir = TMP.'smarty'.DS.'compile'.DS;
+			$smarty->cache_dir = TMP.'smarty'.DS.'cache'.DS;
+			//$this->subDir = 'smarty'.DS;
+			
+			$smarty->error_reporting = 'E_ALL & ~E_NOTICE';
+			$smarty->default_modifiers = array('escape:"html"');
+			$smarty->compile_check = true;
+			
+			//UNDONE: if you need, modify section.
+			/*
+			$smarty->autoload_filters = array(
+				'pre' => array('hoge'),
+				'output' => array('escape')
+			);
+			$smarty->left_delimiter = '{';
+			$smarty->right_delimiter = '}';
 
+			//for development
+			$smarty->debugging = (Configure::read('debug') == 0) ? false : true;
+			*/
+			
+			self::$instance = $smarty;
+		}
+		return self::$instance;
+	}
+
+}
+
+class SmartyView extends View {
+	
+	function __construct (&$controller) {
+		parent::__construct($controller);
+		
+		$this->Smarty = SmartySingleton::instance();
+		$this->ext= '.tpl';
 		$this->viewVars['params'] = $this->params;
 	}
 
-	
 	protected function _render($___viewFn, $___dataForView = array()) {	
+	
 		$isCtpFile = (substr($___viewFn, -3) === 'ctp');
 		
 		if (empty($___dataForView)) {
