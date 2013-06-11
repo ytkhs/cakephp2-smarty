@@ -24,5 +24,5 @@ setup cache & complle directory
 	
 if you need, make your plugin and config directory
 	
-	$ mkdir -p app/View/SmartyPlugins/
-	$ mkdir -p app/View/SmartyConfigs/
+	$ mkdir -p app/Lib/SmartyPlugins/
+	$ mkdir -p app/Lib/SmartyConfigs/
