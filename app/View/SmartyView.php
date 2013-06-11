@@ -50,7 +50,6 @@ class SmartySingleton {
 			$smarty->config_dir = APP.'View'.DS.'SmartyConfigs'.DS;
 			$smarty->compile_dir = TMP.'smarty'.DS.'compile'.DS;
 			$smarty->cache_dir = TMP.'smarty'.DS.'cache'.DS;
-			//$this->subDir = 'smarty'.DS;
 			
 			$smarty->error_reporting = 'E_ALL & ~E_NOTICE';
 			$smarty->default_modifiers = array('escape:"html"');
@@ -82,6 +81,8 @@ class SmartyView extends View {
 		parent::__construct($controller);
 		
 		$this->Smarty = SmartySingleton::instance();
+		
+		//$this->subDir = 'smarty'.DS;
 		$this->ext= '.tpl';
 		$this->viewVars['params'] = $this->params;
 	}
