@@ -26,3 +26,4 @@ if you need, make your plugin and config directory
 	
 	$ mkdir -p app/Lib/SmartyPlugins/
 	$ mkdir -p app/Lib/SmartyConfigs/
+	
