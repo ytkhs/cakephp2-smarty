@@ -53,9 +53,12 @@ class SmartySingleton {
 			
 			$smarty->error_reporting = 'E_ALL & ~E_NOTICE';
 			$smarty->default_modifiers = array('escape:"html"');
+			$smarty->caching = true;
 			$smarty->compile_check = true;
+			$smarty->cache_lifetime = 3600;
+			$smarty->cache_modified_check = false;
+			$smarty->force_compile = (Configure::read('debug') > 0) ? true :false;
 			
-			//UNDONE: if you need, modify section.
 			/*
 			$smarty->autoload_filters = array(
 				'pre' => array('hoge'),
@@ -109,9 +112,7 @@ class SmartyView extends View {
 			}
 			$this->Smarty->assign('_view', $this);
 			
-			ob_start();
-			$this->Smarty->display($___viewFn);
-			$out = ob_get_clean();
+			$out = $this->Smarty->fetch($___viewFn);
 		}
 		return $out;
 	}
