@@ -81,13 +81,13 @@ class SmartySingleton {
 class SmartyView extends View {
 	
 	function __construct (&$controller) {
-		parent::__construct($controller);
 		
 		$this->Smarty = SmartySingleton::instance();
 		
 		//$this->subDir = 'smarty'.DS;
 		$this->ext= '.tpl';
 		$this->viewVars['params'] = $this->params;
+		parent::__construct($controller);
 	}
 
 	protected function _render($___viewFn, $___dataForView = array()) {	
@@ -125,7 +125,6 @@ class SmartyView extends View {
 			$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);
 			$this->Smarty->assign(strtolower($name), $this->{$class});
 		}
-		$this->_helpersLoaded = true;
 	}
 }
 //EOF
